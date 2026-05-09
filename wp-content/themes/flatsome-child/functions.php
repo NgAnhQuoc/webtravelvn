@@ -410,6 +410,126 @@ function cs_register_ux_builder_video_element()
         ),
     ));
 
+    // Register CS Destination Blog
+    add_ux_builder_shortcode('cs_destination_blog', array(
+        'name' => 'CS Destination Blog',
+        'category' => 'Content',
+        'priority' => 11,
+        'options' => array(
+            'post_ids' => array(
+                'type' => 'select',
+                'heading' => 'Chọn bài viết',
+                'config' => array(
+                    'multiple' => true,
+                    'placeholder' => 'Chọn bài viết...',
+                    'postSelect' => array(
+                        'post_type' => 'post',
+                    ),
+                ),
+            ),
+            'cat_ids' => array(
+                'type' => 'select',
+                'heading' => 'Chọn danh mục',
+                'config' => array(
+                    'multiple' => true,
+                    'placeholder' => 'Chọn danh mục...',
+                    'termSelect' => array(
+                        'post_type' => 'post',
+                        'taxonomies' => 'category',
+                    ),
+                ),
+            ),
+            'orderby' => array(
+                'type' => 'select',
+                'heading' => 'Sắp xếp theo',
+                'default' => 'date',
+                'options' => array(
+                    'date' => 'Ngày tạo',
+                    'title' => 'Tiêu đề',
+                    'rand' => 'Ngẫu nhiên',
+                    'comment_count' => 'Lượt bình luận',
+                    'views' => 'Lượt xem',
+                )
+            ),
+            'order' => array(
+                'type' => 'select',
+                'heading' => 'Thứ tự',
+                'default' => 'DESC',
+                'options' => array(
+                    'DESC' => 'Giảm dần',
+                    'ASC' => 'Tăng dần',
+                )
+            ),
+            'count' => array(
+                'type' => 'textfield',
+                'heading' => 'Số lượng bài viết',
+                'default' => '6',
+            ),
+            'layout' => array(
+                'type' => 'select',
+                'heading' => 'Bố cục hiển thị',
+                'default' => 'slider',
+                'options' => array(
+                    'slider' => 'Dạng Slider',
+                    'grid' => 'Dạng Lưới (Grid)',
+                )
+            ),
+            'columns' => array(
+                'type' => 'select',
+                'heading' => 'Số cột',
+                'default' => '3',
+                'options' => array(
+                    '1' => '1 Cột',
+                    '2' => '2 Cột',
+                    '3' => '3 Cột',
+                    '4' => '4 Cột',
+                )
+            ),
+            'gap' => array(
+                'type' => 'slider',
+                'heading' => 'Khoảng cách giữa các mục (Gap)',
+                'default' => 30,
+                'unit' => 'px',
+                'min' => 0,
+                'max' => 100,
+            ),
+            'show_excerpt' => array(
+                'type' => 'checkbox',
+                'heading' => 'Hiện tóm tắt',
+                'default' => 'false',
+            ),
+            'show_date' => array(
+                'type' => 'checkbox',
+                'heading' => 'Hiện ngày tháng',
+                'default' => 'true',
+            ),
+            'show_category' => array(
+                'type' => 'checkbox',
+                'heading' => 'Hiện danh mục',
+                'default' => 'true',
+            ),
+            'show_views' => array(
+                'type' => 'checkbox',
+                'heading' => 'Hiện lượt xem',
+                'default' => 'true',
+            ),
+            'show_arrows' => array(
+                'type' => 'checkbox',
+                'heading' => 'Hiện Nút điều hướng (Slider)',
+                'default' => 'true',
+            ),
+            'autoplay' => array(
+                'type' => 'slider',
+                'heading' => 'Tự động chạy (Slider)',
+                'default' => 5000,
+                'unit' => 'ms',
+                'min' => 0,
+                'max' => 10000,
+                'step' => 500,
+            ),
+        ),
+    ));
+
 
     // Register CS Contact List (Parent)
     add_ux_builder_shortcode('cs_contact_list', array(
@@ -728,6 +848,208 @@ function cs_destinations_slider_shortcode($atts)
     return ob_get_clean();
 }
 
+// Shortcode hiển thị Blog Bài Viết (Cẩm nang du lịch)
+add_shortcode('cs_destination_blog', 'cs_destination_blog_shortcode');
+function cs_destination_blog_shortcode($atts)
+{
+    $atts = shortcode_atts(array(
+        'post_ids' => '',
+        'cat_ids' => '',
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'count' => '6',
+        'layout' => 'slider',
+        'columns' => '3',
+        'gap' => '30',
+        'show_excerpt' => 'false',
+        'show_date' => 'true',
+        'show_category' => 'true',
+        'show_views' => 'true',
+        'show_arrows' => 'true',
+        'autoplay' => '5000',
+    ), $atts);
+
+    // Xử lý query
+    $args = array(
+        'post_type' => 'post',
+        'post_status' => 'publish',
+        'posts_per_page' => intval($atts['count']),
+        'orderby' => $atts['orderby'],
+        'order' => $atts['order'],
+    );
+
+    // Xử lý sắp xếp theo lượt xem
+    if ($atts['orderby'] === 'views') {
+        $args['meta_key'] = 'cs_post_views_count';
+        $args['orderby'] = 'meta_value_num';
+    }
+
+    if (!empty($atts['post_ids'])) {
+        $args['post__in'] = is_array($atts['post_ids']) ? $atts['post_ids'] : explode(',', $atts['post_ids']);
+    }
+
+    if (!empty($atts['cat_ids'])) {
+        $args['cat'] = $atts['cat_ids'];
+    }
+
+    $query = new WP_Query($args);
+
+    if (!$query->have_posts()) {
+        return '<p>Không tìm thấy bài viết nào.</p>';
+    }
+
+    $id = 'cs-blog-' . uniqid();
+    $gap_val = intval($atts['gap']);
+    $padding_val = $gap_val / 2;
+    $columns = intval($atts['columns']);
+
+    ob_start();
+    ?>
+    <div
+        class="cs-blog-outer <?php echo ($atts['layout'] === 'slider') ? 'is-slider' : 'is-grid'; ?> <?php echo ($atts['show_arrows'] === 'true') ? 'has-arrows' : 'no-arrows'; ?>">
+        <div class="cs-blog-inner">
+            <div id="<?php echo $id; ?>"
+                class="<?php echo ($atts['layout'] === 'slider') ? 'cs-slick-slider' : 'cs-post-grid-manual'; ?>"
+                data-columns="<?php echo $columns; ?>"
+                style="margin: 0 -<?php echo $padding_val; ?>px; <?php if ($atts['layout'] === 'grid')
+                       echo 'display: grid; grid-template-columns: repeat(' . $columns . ', 1fr); gap: ' . $gap_val . 'px; margin: 0;'; ?>">
+
+                <?php while ($query->have_posts()):
+                    $query->the_post();
+                    $img_url = get_the_post_thumbnail_url(get_the_ID(), 'large');
+                    if (!$img_url)
+                        $img_url = get_stylesheet_directory_uri() . '/assets/images/placeholder.png';
+                    $categories = get_the_category();
+                    ?>
+                    <div class="blog-item <?php echo ($atts['layout'] === 'slider') ? 'slick-item' : ''; ?>"
+                        style="<?php echo ($atts['layout'] === 'slider') ? 'padding: 0 ' . $padding_val . 'px !important;' : ''; ?>">
+
+                        <div class="cs-video-card" onclick="window.location.href='<?php the_permalink(); ?>'">
+                            <div class="cs-video-img">
+                                <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title_attribute(); ?>">
+
+                                <?php if ($atts['show_category'] === 'true' && !empty($categories)): ?>
+                                    <div class="cs-time-badge"><?php echo esc_html($categories[0]->name); ?></div>
+                                <?php endif; ?>
+
+                                <div class="cs-video-overlay">
+                                    <h4 class="cs-video-title"><?php the_title(); ?></h4>
+
+                                    <div class="cs-video-stats">
+                                        <?php if ($atts['show_date'] === 'true'):
+                                            $time_diff = current_time('timestamp') - get_the_time('U');
+                                            $relative_time = get_the_date();
+                                            $condition = array(
+                                                12 * 30 * 24 * 60 * 60 => 'năm',
+                                                30 * 24 * 60 * 60 => 'tháng',
+                                                7 * 24 * 60 * 60 => 'tuần',
+                                                24 * 60 * 60 => 'ngày',
+                                                60 * 60 => 'giờ',
+                                                60 => 'phút',
+                                                1 => 'giây'
+                                            );
+                                            foreach ($condition as $secs => $str) {
+                                                $d = $time_diff / $secs;
+                                                if ($d >= 1) {
+                                                    $t = round($d);
+                                                    $relative_time = $t . ' ' . $str . ' trước';
+                                                    break;
+                                                }
+                                            }
+                                            ?>
+                                            <span><?php echo $relative_time; ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if ($atts['show_views'] === 'true'): ?>
+                                            <span><i class="fas fa-eye"></i> <?php echo cs_get_post_views(get_the_ID()); ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile;
+                wp_reset_postdata(); ?>
+
+            </div>
+        </div>
+        <?php if ($atts['layout'] === 'slider'): ?>
+            <div id="<?php echo $id; ?>-nav" class="cs-slider-nav"></div>
+        <?php endif; ?>
+    </div>
+
+    <?php if ($atts['layout'] === 'slider'): ?>
+        <script>
+            (function ($) {
+                var initSlick_<?php echo str_replace('-', '_', $id); ?> = function () {
+                    var $slider = $('#<?php echo $id; ?>');
+                    if (!$slider.length) return;
+
+                    if ($slider.hasClass('slick-initialized')) {
+                        $slider.slick('unslick');
+                    }
+
+                    var cols = parseInt($slider.attr('data-columns')) || 3;
+                    var total = <?php echo $query->post_count; ?>;
+
+                    $slider.slick({
+                        dots: false,
+                        infinite: total > cols,
+                        speed: 500,
+                        slidesToShow: cols,
+                        slidesToScroll: 1,
+                        autoplay: <?php echo intval($atts['autoplay']) > 0 ? 'true' : 'false'; ?>,
+                        autoplaySpeed: <?php echo intval($atts['autoplay']); ?>,
+                        arrows: <?php echo ($atts['show_arrows'] === 'true') ? 'true' : 'false'; ?>,
+                        appendArrows: $('#<?php echo $id; ?>-nav'),
+                        responsive: [
+                            {
+                                breakpoint: 1100,
+                                settings: { slidesToShow: (cols > 3) ? 3 : cols }
+                            },
+                            {
+                                breakpoint: 850,
+                                settings: { slidesToShow: (cols > 2) ? 2 : cols }
+                            },
+                            {
+                                breakpoint: 600,
+                                settings: { slidesToShow: 1 }
+                            }
+                        ]
+                    });
+                };
+
+                $(document).ready(function () {
+                    initSlick_<?php echo str_replace('-', '_', $id); ?>();
+                });
+
+                $(document).on('ux_builder_rendered', function () {
+                    initSlick_<?php echo str_replace('-', '_', $id); ?>();
+                });
+
+                setTimeout(initSlick_<?php echo str_replace('-', '_', $id); ?>, 300);
+            })(jQuery);
+        </script>
+    <?php endif; ?>
+
+    <style>
+        /* Thêm style cho Grid layout mobile nếu cần */
+        @media (max-width: 850px) {
+            #<?php echo $id; ?>.cs-post-grid-manual {
+                grid-template-columns: repeat(<?php echo ($columns > 2) ? 2 : $columns; ?>, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #<?php echo $id; ?>.cs-post-grid-manual {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+    <?php
+    return ob_get_clean();
+}
+
 // Shortcode cho CS Contact List (Parent)
 function cs_contact_list_shortcode($atts, $content = null)
 {
@@ -796,4 +1118,46 @@ function cs_register_tinymce_video_button($buttons)
 {
     array_push($buttons, 'cs_video_button', 'cs_quote_button');
     return $buttons;
+}
+
+/* =============================================
+   HỆ THỐNG TÍNH LƯỢT XEM BÀI VIẾT (VIEWS)
+   ============================================= */
+
+// Hàm lấy lượt xem
+function cs_get_post_views($postID)
+{
+    $count_key = 'cs_post_views_count';
+    $count = get_post_meta($postID, $count_key, true);
+    if ($count == '') {
+        delete_post_meta($postID, $count_key);
+        add_post_meta($postID, $count_key, '0');
+        return "0";
+    }
+    return number_format($count);
+}
+
+// Hàm tăng lượt xem
+function cs_set_post_views($postID)
+{
+    $count_key = 'cs_post_views_count';
+    $count = get_post_meta($postID, $count_key, true);
+    if ($count == '') {
+        $count = 0;
+        delete_post_meta($postID, $count_key);
+        add_post_meta($postID, $count_key, '0');
+    } else {
+        $count++;
+        update_post_meta($postID, $count_key, $count);
+    }
+}
+
+// Theo dõi lượt xem khi vào trang Single Post
+add_action('wp_head', 'cs_track_post_views');
+function cs_track_post_views()
+{
+    if (is_single()) {
+        global $post;
+        cs_set_post_views($post->ID);
+    }
 }

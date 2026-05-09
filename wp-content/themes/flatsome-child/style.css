@@ -906,6 +906,38 @@ button.flickity-button:hover .arrow {
     color: var(--gold);
 }
 
+.cs-post-card-date {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+}
+
+.cs-post-card-date i {
+    color: var(--gold);
+    font-size: 0.9rem;
+}
+
+.cs-post-card-excerpt {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.75);
+    margin-top: 15px;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.cs-post-card:hover .cs-post-card-excerpt {
+    color: #fff;
+}
+
 /* Custom Pagination */
 .cs-pagination {
     text-align: center;
@@ -1542,6 +1574,95 @@ button.flickity-button:hover .arrow {
 .cs-copyright p {
     font-size: 0.85rem;
     color: var(--text-muted);
+}
+
+
+
+/* Horizontal Video Cards - Styled for CS Destination Blog */
+.cs-video-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid transparent;
+    transition: var(--transition);
+    background: #000;
+}
+
+.cs-video-img {
+    aspect-ratio: 16/9;
+    width: 100%;
+    position: relative;
+}
+
+.cs-video-img img {
+    width: 100%;
+    height: 100% !important;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.cs-video-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(226, 186, 113, 0.3);
+    box-shadow: var(--shadow-glow);
+}
+
+.cs-video-card:hover .cs-video-img img {
+    transform: scale(1.05);
+}
+
+.cs-time-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    padding: 6px 15px;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    color: var(--gold);
+    font-weight: 600;
+    z-index: 5;
+    text-transform: uppercase;
+}
+
+.cs-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+}
+
+.cs-video-title {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+    line-height: 1.4 !important;
+    color: #fff !important;
+    font-family: 'Montserrat', sans-serif !important;
+    text-transform: uppercase;
+}
+
+.cs-video-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.cs-video-stats span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cs-video-stats i {
+    color: var(--gold);
 }
 
 footer .absolute-footer {
