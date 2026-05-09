@@ -995,13 +995,15 @@ function cs_destination_blog_shortcode($atts)
                     $slider.slick({
                         dots: false,
                         infinite: total > cols,
-                        speed: 500,
+                        speed: 600,
                         slidesToShow: cols,
                         slidesToScroll: 1,
                         autoplay: <?php echo intval($atts['autoplay']) > 0 ? 'true' : 'false'; ?>,
                         autoplaySpeed: <?php echo intval($atts['autoplay']); ?>,
                         arrows: <?php echo ($atts['show_arrows'] === 'true') ? 'true' : 'false'; ?>,
                         appendArrows: $('#<?php echo $id; ?>-nav'),
+                        prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
+                        nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>',
                         responsive: [
                             {
                                 breakpoint: 1100,

@@ -1600,18 +1600,13 @@ button.flickity-button:hover .arrow {
     width: 100%;
     height: 100% !important;
     object-fit: cover;
-    transition: transform 0.8s ease;
 }
 
 .cs-video-card:hover {
-    transform: translateY(-8px);
     border-color: rgba(226, 186, 113, 0.3);
     box-shadow: var(--shadow-glow);
 }
 
-.cs-video-card:hover .cs-video-img img {
-    transform: scale(1.05);
-}
 
 .cs-time-badge {
     position: absolute;
@@ -1668,3 +1663,65 @@ button.flickity-button:hover .arrow {
 footer .absolute-footer {
     display: none !important;
 }
+
+/* Container & Layout Fixes for Blog Slider */
+.cs-blog-outer {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    margin: 0 auto;
+}
+
+.cs-blog-inner {
+    width: 100%;
+    overflow: hidden; /* Ngăn tràn slide ra ngoài container */
+    padding: 15px 0 35px; /* Thêm khoảng trống để không bị cắt bóng đổ (box-shadow) */
+    margin: -15px 0 -35px;
+}
+
+.cs-blog-outer.is-slider {
+    padding: 0 50px; /* Tạo khoảng trống cho nút mũi tên ở 2 bên */
+}
+
+@media (max-width: 768px) {
+    .cs-blog-outer.is-slider {
+        padding: 0; /* Trên mobile nút mũi tên thường ẩn hoặc đè lên */
+    }
+}
+
+/* Tùy chỉnh nút mũi tên Slider */
+.cs-slider-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.cs-slider-nav button {
+    pointer-events: auto;
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cs-slider-nav button:hover {
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
+}
+
+.cs-slider-nav .slick-prev { left: -15px; }
+.cs-slider-nav .slick-next { right: -15px; }
