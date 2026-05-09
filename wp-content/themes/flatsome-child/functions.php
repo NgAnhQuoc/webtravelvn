@@ -557,12 +557,15 @@ function cs_destinations_slider_shortcode($atts)
     if (empty($terms) || is_wp_error($terms))
         return '<p>Chưa có danh mục nào.</p>';
 
-    $id = 'slick-' . rand(100, 999);
+    $id = 'cs-slick-' . uniqid();
     $term_count = count($terms);
 
-    // Mẹo: Nếu số lượng địa điểm ít hơn hoặc bằng số cột, nhân bản chúng để cho phép xoay vòng (loop)
-    if ($term_count > 0 && $term_count <= intval($columns)) {
+    // Nhân bản item nếu số lượng ít hơn 2 lần số cột để Slick Slider hoạt động mượt mà hơn (tránh lỗi khi số cột lớn)
+    if ($term_count > 0 && $term_count < (intval($columns) * 2)) {
         $terms = array_merge($terms, $terms);
+        if (count($terms) < (intval($columns) * 2)) {
+            $terms = array_merge($terms, $terms);
+        }
         $term_count = count($terms);
     }
 
@@ -656,39 +659,70 @@ function cs_destinations_slider_shortcode($atts)
 
 
     <script>
-        jQuery(document).ready(function ($) {
-            var $slider = $('#<?php echo $id; ?>');
-            var cols = parseInt($slider.data('columns'));
-            var total = <?php echo $term_count; ?>;
+        (function ($) {
+            var initSlick_<?php echo str_replace('-', '_', $id); ?> = function () {
+                var $slider = $('#<?php echo $id; ?>');
+                if (!$slider.length) return;
 
-            $slider.slick({
-                dots: false,
-                infinite: total > cols,
-                speed: 500,
-                slidesToShow: cols,
-                slidesToScroll: 1,
-                autoplay: <?php echo intval($autoplay) > 0 ? 'true' : 'false'; ?>,
-                autoplaySpeed: <?php echo intval($autoplay); ?>,
-                arrows: <?php echo ($show_arrows === 'true') ? 'true' : 'false'; ?>,
-                infinite: true,
-                appendArrows: $('#' + '<?php echo $id; ?>-nav'),
-                responsive: [
-                    {
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: (cols > 3 && '<?php echo $layout_style; ?>' === 'style2') ? 3 : (cols > 2 ? 2 : cols)
-                        }
-                    },
-                    {
-                        breakpoint: 600,
-                        settings: {
-                            slidesToShow: ('<?php echo $layout_style; ?>' === 'style2') ? 2 : 1
-                        }
-                    }
-                ]
+                // Nếu đã init rồi thì unslick để init lại với cấu hình mới
+                if ($slider.hasClass('slick-initialized')) {
+                    $slider.slick('unslick');
+                }
 
+                var cols = parseInt($slider.attr('data-columns')) || 3;
+                var total = <?php echo intval($term_count); ?>;
+
+                $slider.slick({
+                    dots: false,
+                    infinite: total > cols,
+                    speed: 500,
+                    slidesToShow: cols,
+                    slidesToScroll: 1,
+                    autoplay: <?php echo intval($autoplay) > 0 ? 'true' : 'false'; ?>,
+                    autoplaySpeed: <?php echo intval($autoplay); ?>,
+                    arrows: <?php echo ($show_arrows === 'true') ? 'true' : 'false'; ?>,
+                    appendArrows: $('#<?php echo $id; ?>-nav'),
+                    responsive: [
+                        {
+                            breakpoint: 1100,
+                            settings: {
+                                slidesToShow: (cols > 4) ? 4 : cols
+                            }
+                        },
+                        {
+                            breakpoint: 850,
+                            settings: {
+                                slidesToShow: (cols > 3) ? 3 : (cols > 2 ? 2 : cols)
+                            }
+                        },
+                        {
+                            breakpoint: 600,
+                            settings: {
+                                slidesToShow: 2
+                            }
+                        },
+                        {
+                            breakpoint: 480,
+                            settings: {
+                                slidesToShow: 1
+                            }
+                        }
+                    ]
+                });
+            };
+
+            $(document).ready(function () {
+                initSlick_<?php echo str_replace('-', '_', $id); ?>();
             });
-        });
+
+            // Hỗ trợ UX Builder render lại
+            $(document).on('ux_builder_rendered', function () {
+                initSlick_<?php echo str_replace('-', '_', $id); ?>();
+            });
+
+            // Timeout dự phòng cho builder
+            setTimeout(initSlick_<?php echo str_replace('-', '_', $id); ?>, 300);
+        })(jQuery);
     </script>
     <?php
     return ob_get_clean();
