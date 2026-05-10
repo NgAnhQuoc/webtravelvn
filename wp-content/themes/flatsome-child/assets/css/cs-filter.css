@@ -1,0 +1,479 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap');
+
+.cs-dark-theme {
+    background-color: #0b0b0b;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.cs-container-wide {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header */
+.cs-page-header {
+    position: relative;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.cs-page-header-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.cs-page-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.cs-category-badge-top {
+    color: #b58e3e;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.cs-archive-title {
+    font-size: 2.5rem !important;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #fff;
+    margin-top: 20px !important;
+    line-height: 1.1 !important;
+}
+
+@media (max-width: 768px) {
+    .cs-page-header {
+        height: 180px;
+        padding: 100px 0 60px;
+    }
+    .cs-archive-title {
+        font-size: 2rem !important;
+    }
+}
+
+/* Main Content */
+.cs-main-content {
+    padding: 80px 0;
+}
+
+.cs-layout-flex {
+    display: flex;
+    gap: 60px;
+}
+
+/* Sidebar Card */
+.cs-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.cs-sidebar::-webkit-scrollbar {
+    width: 3px;
+}
+.cs-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.cs-sidebar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+.cs-sidebar:hover::-webkit-scrollbar-thumb {
+    background: #b58e3e;
+}
+
+.cs-sidebar-card {
+    background: #1a1a1a;
+    border-radius: 20px;
+    padding: 40px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cs-filter-group {
+    margin-bottom: 40px;
+}
+
+.cs-filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.cs-filter-title {
+    font-family: Montserrat, sans-serif;
+    color: #b58e3e;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    letter-spacing: 2px;
+}
+
+/* Checkbox Style Matching Screenshot */
+.cs-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #bbb;
+    transition: 0.3s;
+    position: relative;
+    font-weight: 400 !important;
+}
+
+.cs-checkbox-label:hover {
+    color: #fff;
+}
+
+.cs-checkbox-label input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.cs-checkmark {
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-right: 15px;
+    position: relative;
+    transition: 0.3s;
+    flex-shrink: 0;
+}
+
+.cs-checkbox-label input:checked ~ .cs-checkmark {
+    background-color: #b58e3e;
+}
+
+.cs-checkbox-label input:checked ~ .cs-checkmark:after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.cs-checkbox-label input:checked ~ .cs-term-name {
+    color: #fff;
+}
+
+.cs-term-count {
+    margin-left: auto;
+    font-size: 13px;
+    color: #666;
+}
+
+/* Post Cards Grid */
+.cs-results-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.cs-post-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 25px !important;
+    width: 100% !important;
+}
+
+.cs-post-card {
+    position: relative !important;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 300px !important;
+    background: #1a1a1a;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: block !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+}
+
+.cs-post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cs-card-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.cs-post-card:hover .cs-card-img {
+    transform: scale(1.1);
+}
+
+.cs-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 40%, transparent 100%);
+    z-index: 1;
+}
+
+.cs-card-info {
+    position: absolute;
+    bottom: 25px;
+    left: 20px;
+    right: 20px;
+    z-index: 2;
+}
+
+.cs-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cs-card-location {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    gap: 2px;
+}
+
+.cs-card-location i {
+    color: #b58e3e;
+    font-size: 14px;
+    margin-right: 6px;
+}
+
+/* Pagination */
+.cs-pagination {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.cs-pagination a, .cs-pagination span {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    border: 1px solid #333;
+    margin: 0 5px;
+    color: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.cs-pagination .current, .cs-pagination a:hover {
+    background: #b58e3e;
+    border-color: #b58e3e;
+}
+
+/* No Results */
+.cs-no-results-template {
+    text-align: center;
+    padding: 60px 40px;
+    background: #161616;
+    border-radius: 30px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+
+.cs-no-results-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(181, 142, 62, 0.1);
+    color: #b58e3e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+/* Mobile Filter Drawer */
+.cs-mobile-filter-btn {
+    display: none;
+    background: #b58e3e;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.cs-sidebar-header-mobile {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cs-sidebar-close {
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.cs-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 9998;
+    display: none;
+}
+
+.cs-mobile-apply-btn-wrapper {
+    display: none;
+    margin-top: 30px;
+    position: sticky;
+    bottom: 0;
+    background: #1a1a1a;
+    padding-top: 20px;
+    z-index: 10;
+}
+
+.cs-mobile-apply-btn {
+    background: #b58e3e;
+    color: #fff;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+@media (max-width: 991px) {
+    .cs-main-content {
+        padding: 20px 0;
+    }
+    .cs-layout-flex {
+        flex-direction: column;
+    }
+    .cs-mobile-filter-btn {
+        display: inline-block;
+    }
+    .cs-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important; /* Ép bám đáy */
+        left: -100% !important;
+        width: 85% !important;
+        height: 100% !important;
+        margin: 0 !important; /* Loại bỏ căn giữa của theme */
+        z-index: 9999 !important;
+        transition: 0.4s;
+        background: #111 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+    .cs-sidebar.is-active {
+        left: 0 !important;
+    }
+    .cs-sidebar-card {
+        height: 100%;
+        border-radius: 0;
+        padding: 0;
+        overflow-y: auto; /* Cho phép cuộn nội dung */
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+    .cs-sidebar-header-mobile {
+        display: flex;
+        position: sticky;
+        top: 0;
+        background: #111;
+        padding: 20px 30px;
+        z-index: 110;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    /* Padding cho các nhóm lọc bên trong để không bị header đè */
+    .cs-sidebar-card .cs-filter-group {
+        padding: 20px 30px;
+    }
+    .cs-mobile-apply-btn-wrapper {
+        display: block;
+        position: sticky;
+        bottom: 0;
+        background: #111;
+        padding: 15px 30px 25px;
+        z-index: 110;
+        margin-top: auto;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .cs-post-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .cs-post-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Loading State */
+#cs-ajax-results {
+    position: relative;
+    transition: opacity 0.3s;
+}
+
+#cs-ajax-results.is-loading {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+#cs-ajax-results.is-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(181, 142, 62, 0.1);
+    border-top-color: #b58e3e;
+    border-radius: 50%;
+    animation: cs-spin 0.8s linear infinite;
+    z-index: 100;
+}
+
+@keyframes cs-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}

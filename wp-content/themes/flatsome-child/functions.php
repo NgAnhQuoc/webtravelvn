@@ -1163,3 +1163,40 @@ function cs_track_post_views()
         cs_set_post_views($post->ID);
     }
 }
+
+// Tích hợp bộ lọc AJAX và Taxonomy Khu vực
+include_once 'functions_filter.php';
+
+/**
+ * Kích hoạt phân trang /page/X/ cho Trang tĩnh (Pages)
+ */
+add_action('init', function() {
+    add_rewrite_endpoint('page', EP_PAGES);
+});
+
+// Đảm bảo WordPress nhận diện đúng biến paged trên Trang tĩnh
+add_filter('request', function($query_vars) {
+    if (isset($query_vars['page']) && !is_admin()) {
+        $query_vars['paged'] = $query_vars['page'];
+    }
+    return $query_vars;
+});
+
+// Xử lý xung đột giữa Category Base và Trang tĩnh "danh-muc"
+add_action('parse_request', function($wp) {
+    if (isset($wp->request) && preg_match('#^danh-muc/page/([0-9]+)#', $wp->request, $matches)) {
+        $wp->query_vars['pagename'] = 'danh-muc';
+        $wp->query_vars['paged'] = $matches[1];
+        // Loại bỏ các biến gây xung đột từ Category Base
+        unset($wp->query_vars['category_name']);
+        unset($wp->query_vars['name']);
+    }
+}, 1);
+
+// Ngăn WordPress tự động Redirect khi có phân trang trên Trang tĩnh
+add_filter('redirect_canonical', function($redirect_url, $requested_url) {
+    if (strpos($requested_url, '/page/') !== false) {
+        return false;
+    }
+    return $redirect_url;
+}, 10, 2);
