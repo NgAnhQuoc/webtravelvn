@@ -26,7 +26,7 @@ function cs_edit_category_image_field($term, $taxonomy)
     <tr class="form-field term-group-wrap">
         <th scope="row"><label for="category-image-id"><?php _e('Ảnh đại diện', 'hero'); ?></label></th>
         <td>
-            <input type="hidden" id="category-image-id" name="category-image-id" value="<?php echo $image_id; ?>">
+            <input type="hidden" id="category-image-id" name="category-image-id" value="<?php echo esc_attr($image_id); ?>">
             <div id="category-image-wrapper">
                 <?php if ($image_id)
                     echo wp_get_attachment_image($image_id, 'thumbnail'); ?>
@@ -47,7 +47,7 @@ add_action('edited_category', 'cs_save_category_image', 10, 2);
 function cs_save_category_image($term_id, $tt_id)
 {
     if (isset($_POST['category-image-id']) && '' !== $_POST['category-image-id']) {
-        update_term_meta($term_id, 'featured_image_id', $_POST['category-image-id']);
+        update_term_meta($term_id, 'featured_image_id', absint($_POST['category-image-id']));
     } else {
         delete_term_meta($term_id, 'featured_image_id');
     }

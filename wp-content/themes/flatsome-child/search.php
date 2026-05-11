@@ -54,7 +54,7 @@ get_header();
                         </div>
                         <h2 class="cs-font-serif">KHÔNG TÌM THẤY KẾT QUẢ</h2>
                         <p>Rất tiếc, chúng tôi không tìm thấy bài viết nào phù hợp với từ khóa
-                            "<strong><?php echo get_search_query(); ?></strong>".</p>
+                            "<strong><?php echo esc_html(get_search_query()); ?></strong>".</p>
                         <div class="cs-search-retry-box">
                             <form method="get" class="searchform" action="<?php echo esc_url(home_url('/')); ?>"
                                 role="search">

@@ -15,10 +15,13 @@ function cs_taxonomy_manager_menu()
 
 function cs_taxonomy_manager_page()
 {
-    // Xử lý lưu dữ liệu bộ lọc
+    // Xử lý lưu dữ liệu bộ lọc (có CSRF nonce verification)
     if (isset($_POST['cs_save_taxonomies'])) {
-        $labels = $_POST['tax_labels'];
-        $slugs = $_POST['tax_slugs'];
+        if (!isset($_POST['cs_tax_nonce']) || !wp_verify_nonce($_POST['cs_tax_nonce'], 'cs_save_taxonomies_action')) {
+            wp_die('Lỗi bảo mật: Yêu cầu không hợp lệ.', 'Lỗi bảo mật', array('response' => 403));
+        }
+        $labels = isset($_POST['tax_labels']) ? array_map('sanitize_text_field', $_POST['tax_labels']) : array();
+        $slugs = isset($_POST['tax_slugs']) ? array_map('sanitize_text_field', $_POST['tax_slugs']) : array();
         $new_data = array();
         for ($i = 0; $i < count($labels); $i++) {
             if (!empty($labels[$i]) && !empty($slugs[$i])) {
@@ -29,22 +32,28 @@ function cs_taxonomy_manager_page()
         echo '<div class="updated"><p>Đã cập nhật danh sách Bộ lọc!</p></div>';
     }
 
-    // Xử lý thêm mục con (Term)
+    // Xử lý thêm mục con (Term) - có CSRF nonce verification
     if (isset($_POST['cs_add_term'])) {
+        if (!isset($_POST['cs_add_term_nonce']) || !wp_verify_nonce($_POST['cs_add_term_nonce'], 'cs_add_term_action')) {
+            wp_die('Lỗi bảo mật: Yêu cầu không hợp lệ.', 'Lỗi bảo mật', array('response' => 403));
+        }
         $tax = sanitize_text_field($_POST['target_tax']);
         $term_name = sanitize_text_field($_POST['term_name']);
         if (!empty($term_name)) {
             $res = wp_insert_term($term_name, $tax);
             if (is_wp_error($res)) {
-                echo '<div class="error"><p>Lỗi: ' . $res->get_error_message() . '</p></div>';
+                echo '<div class="error"><p>Lỗi: ' . esc_html($res->get_error_message()) . '</p></div>';
             } else {
-                echo '<div class="updated"><p>Đã thêm mục "' . $term_name . '" thành công!</p></div>';
+                echo '<div class="updated"><p>Đã thêm mục "' . esc_html($term_name) . '" thành công!</p></div>';
             }
         }
     }
 
-    // Xử lý xóa mục con
+    // Xử lý xóa mục con - có CSRF nonce verification
     if (isset($_GET['delete_term']) && isset($_GET['tax'])) {
+        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'cs_delete_term_' . intval($_GET['delete_term']))) {
+            wp_die('Lỗi bảo mật: Yêu cầu không hợp lệ.', 'Lỗi bảo mật', array('response' => 403));
+        }
         wp_delete_term(intval($_GET['delete_term']), sanitize_text_field($_GET['tax']));
         echo '<div class="updated"><p>Đã xóa mục thành công!</p></div>';
     }
@@ -206,6 +215,7 @@ function cs_taxonomy_manager_page()
             </div>
             <div class="cs-card-body">
                 <form method="post">
+                    <?php wp_nonce_field('cs_save_taxonomies_action', 'cs_tax_nonce'); ?>
                     <table class="cs-table" id="cs-tax-table">
                         <thead>
                             <tr>
@@ -264,6 +274,7 @@ function cs_taxonomy_manager_page()
                     <div class="cs-card-body">
                         <form method="post"
                             style="display: flex; gap: 10px; margin-bottom: 20px; background: #fcfcfc; padding: 15px; border-radius: 8px; border: 1px dashed #ddd;">
+                            <?php wp_nonce_field('cs_add_term_action', 'cs_add_term_nonce'); ?>
                             <input type="hidden" name="target_tax" value="<?php echo esc_attr($slug); ?>">
                             <input type="text" name="term_name" placeholder="Tên mục con mới..." required class="cs-input">
                             <button type="submit" name="cs_add_term" class="cs-btn cs-btn-primary"
@@ -287,7 +298,7 @@ function cs_taxonomy_manager_page()
                                                     viết: <?php echo $t->count; ?></div>
                                             </td>
                                             <td style="text-align: center;">
-                                                <a href="<?php echo admin_url('edit.php?page=cs-tax-manager&delete_term=' . $t->term_id . '&tax=' . $slug); ?>"
+                                                <a href="<?php echo wp_nonce_url(admin_url('edit.php?page=cs-tax-manager&delete_term=' . $t->term_id . '&tax=' . $slug), 'cs_delete_term_' . $t->term_id); ?>"
                                                     class="cs-btn cs-btn-danger" onclick="return confirm('Xóa mục này?')">Xóa</a>
                                             </td>
                                         </tr>
@@ -396,7 +407,7 @@ function cs_render_filter_sidebar()
             </h4>
             <div class="cs-filter-items">
                 <label class="cs-checkbox-label">
-                    <input type="checkbox" class="cs-filter-checkbox cs-filter-all" value="" data-tax="<?php echo $tax_slug; ?>"
+                    <input type="checkbox" class="cs-filter-checkbox cs-filter-all" value="" data-tax="<?php echo esc_attr($tax_slug); ?>"
                         checked>
                     <span class="cs-checkmark"></span>
                     <span class="cs-term-name">Tất cả</span>
@@ -404,16 +415,16 @@ function cs_render_filter_sidebar()
                 <?php foreach ($terms as $term):
                     $is_checked = false;
                     if (isset($_GET[$tax_slug])) {
-                        $url_terms = explode(',', $_GET[$tax_slug]);
-                        if (in_array($term->slug, $url_terms))
+                        $url_terms = explode(',', sanitize_text_field(wp_unslash($_GET[$tax_slug])));
+                        if (in_array($term->slug, $url_terms, true))
                             $is_checked = true;
                     }
                     ?>
                     <label class="cs-checkbox-label">
-                        <input type="checkbox" class="cs-filter-checkbox" value="<?php echo $term->slug; ?>"
-                            data-tax="<?php echo $tax_slug; ?>" <?php checked($is_checked); ?>>
+                        <input type="checkbox" class="cs-filter-checkbox" value="<?php echo esc_attr($term->slug); ?>"
+                            data-tax="<?php echo esc_attr($tax_slug); ?>" <?php checked($is_checked); ?>>
                         <span class="cs-checkmark"></span>
-                        <span class="cs-term-name"><?php echo $term->name; ?></span>
+                        <span class="cs-term-name"><?php echo esc_html($term->name); ?></span>
                         <span class="cs-term-count">(<?php echo $term->count; ?>)</span>
                     </label>
                 <?php endforeach; ?>
@@ -437,12 +448,28 @@ add_action('rest_api_init', function () {
 function cs_rest_filter_posts($request)
 {
     $params = $request->get_params();
-    $filters = isset($params['filters']) ? $params['filters'] : array();
-    $paged = isset($params['paged']) ? intval($params['paged']) : 1;
-    $current_id = isset($params['current_id']) ? intval($params['current_id']) : 0;
-    $current_tax = isset($params['current_tax']) ? sanitize_text_field($params['current_tax']) : '';
+    $raw_filters = isset($params['filters']) ? $params['filters'] : array();
+    $paged = isset($params['paged']) ? absint($params['paged']) : 1;
+    $current_id = isset($params['current_id']) ? absint($params['current_id']) : 0;
+    $current_tax = isset($params['current_tax']) ? sanitize_key($params['current_tax']) : '';
     $current_url = isset($params['current_url']) ? esc_url_raw($params['current_url']) : '';
     $search_query = isset($params['search_query']) ? sanitize_text_field($params['search_query']) : '';
+
+    // Sanitize filters: only allow valid taxonomy slugs and sanitized term slugs
+    $filters = array();
+    if (is_array($raw_filters)) {
+        $registered_taxonomies = get_taxonomies(array(), 'names');
+        foreach ($raw_filters as $tax => $terms) {
+            $tax = sanitize_key($tax);
+            if (!in_array($tax, $registered_taxonomies, true)) continue;
+            if (is_array($terms)) {
+                $filters[$tax] = array_map('sanitize_title', $terms);
+            }
+        }
+    }
+
+    // Clamp paged to reasonable range
+    $paged = max(1, min($paged, 9999));
 
     $args = array(
         'post_type' => 'post',

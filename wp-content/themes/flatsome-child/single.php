@@ -19,7 +19,7 @@ get_header();
             if (!$featured_img)
                 $featured_img = get_stylesheet_directory_uri() . '/assets/images/ninhbinh.png';
             ?>
-            <section class="cs-page-header" style="background-image: url('<?php echo $featured_img; ?>');">
+            <section class="cs-page-header" style="background-image: url('<?php echo esc_url($featured_img); ?>');">
                 <div class="cs-page-header-overlay"></div>
                 <div class="cs-container cs-page-header-content">
                     <?php if (has_category()): ?>
@@ -32,10 +32,10 @@ get_header();
                     <h1 class="cs-font-serif">
                         <?php
                         $hero_title_1 = get_field('hero_title_1');
-                        echo $hero_title_1 ? $hero_title_1 : get_the_title();
+                        echo $hero_title_1 ? esc_html($hero_title_1) : get_the_title();
                         ?>
                         <?php if ($subtitle = get_field('hero_subtitle')): ?>
-                            <br><span class="cs-text-gold"><?php echo $subtitle; ?></span>
+                            <br><span class="cs-text-gold"><?php echo esc_html($subtitle); ?></span>
                         <?php endif; ?>
                     </h1>
                     <?php if (has_excerpt()): ?>
@@ -81,22 +81,22 @@ get_header();
                             <div class="cs-trip-info-grid">
                                 <?php if ($khoi_hanh): ?>
                                     <div class="cs-trip-info-item"><strong class="cs-trip-label">Khởi hành:</strong>
-                                        <?php echo $khoi_hanh; ?></div>
+                                        <?php echo esc_html($khoi_hanh); ?></div>
                                 <?php endif; ?>
 
                                 <?php if ($di_chuyen): ?>
                                     <div class="cs-trip-info-item"><strong class="cs-trip-label">Di chuyển:</strong>
-                                        <?php echo $di_chuyen; ?></div>
+                                        <?php echo esc_html($di_chuyen); ?></div>
                                 <?php endif; ?>
 
                                 <?php if ($luu_tru): ?>
                                     <div class="cs-trip-info-item"><strong class="cs-trip-label">Lưu trú:</strong>
-                                        <?php echo $luu_tru; ?></div>
+                                        <?php echo esc_html($luu_tru); ?></div>
                                 <?php endif; ?>
 
                                 <?php if ($am_thuc): ?>
                                     <div class="cs-trip-info-item"><strong class="cs-trip-label">Ẩm thực:</strong>
-                                        <?php echo $am_thuc; ?></div>
+                                        <?php echo esc_html($am_thuc); ?></div>
                                 <?php endif; ?>
                             </div>
                         </div>

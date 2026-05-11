@@ -43,7 +43,7 @@ unset($taxonomies['post_tag'], $taxonomies['post_format']);
                     } elseif (get_query_var('page')) {
                         $paged = get_query_var('page');
                     } elseif (isset($_GET['paged'])) {
-                        $paged = $_GET['paged'];
+                        $paged = absint($_GET['paged']);
                     } else {
                         $paged = 1;
                     }
