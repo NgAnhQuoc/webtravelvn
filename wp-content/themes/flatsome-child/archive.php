@@ -61,7 +61,7 @@ unset($taxonomies['post_tag'], $taxonomies['post_format']);
                     <?php else: ?>
                         <div class="cs-no-results-template">
                             <div class="cs-no-results-icon">
-                                <span class="dashicons dashicons-search"></span>
+                                <i class="icon-search"></i>
                             </div>
                             <h4 class="cs-font-serif">KHÔNG TÌM THẤY BÀI VIẾT PHÙ HỢP</h4>
                         </div>

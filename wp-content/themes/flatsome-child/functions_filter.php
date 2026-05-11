@@ -524,7 +524,7 @@ function cs_rest_filter_posts($request)
         ob_start();
         ?>
         <div class="cs-no-results-template">
-            <div class="cs-no-results-icon"><span class="dashicons dashicons-search"></span></div>
+            <div class="cs-no-results-icon"><i class="icon-search"></i></div>
             <h4 class="cs-font-serif">KHÔNG TÌM THẤY BÀI VIẾT PHÙ HỢP</h4>
         </div>
         <?php
