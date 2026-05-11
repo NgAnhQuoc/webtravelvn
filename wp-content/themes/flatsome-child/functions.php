@@ -713,7 +713,7 @@ function cs_destinations_slider_shortcode($atts)
                     ?>
                     <div class="slick-item" style="padding: 0 <?php echo $padding_val; ?>px !important;">
                         <div class="cs-card <?php echo ($layout_style === 'style2') ? 'cs-card-s2' : ''; ?>"
-                            onclick="window.location.href='<?php echo get_term_link($term); ?>'">
+                            onclick="window.location.href='<?php echo esc_js(esc_url(get_term_link($term))); ?>'">
                             <div class="cs-card-img">
                                 <img src="<?php echo esc_url($img_url); ?>" alt="<?php echo esc_attr($term->name); ?>">
                             </div>
@@ -957,7 +957,7 @@ function cs_destination_blog_shortcode($atts)
                                                 }
                                             }
                                             ?>
-                                            <span><?php echo $relative_time; ?></span>
+                                            <span><?php echo esc_html($relative_time); ?></span>
                                         <?php endif; ?>
 
                                         <?php if ($atts['show_views'] === 'true'): ?>
@@ -1081,7 +1081,7 @@ function cs_contact_item_shortcode($atts, $content = null)
 
     return '<' . $tag . $href . ' class="cs-contact-item' . $link_class . '">
                 <i class="' . esc_attr($icon) . '"></i>
-                <span>' . $display_text . '</span>
+                <span>' . wp_kses_post($display_text) . '</span>
             </' . $tag . '>';
 }
 add_shortcode('cs_contact_item', 'cs_contact_item_shortcode');
