@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 /**
  * The archive template file (Modified for AJAX Filtering).
  *
@@ -46,9 +49,9 @@ $current_queried_id = get_queried_object_id();
                     <div class="cs-filter-items" style="display: flex; flex-direction: column; gap: 12px;">
                         <?php foreach($regions as $region) : ?>
                             <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.95rem;">
-                                <input type="checkbox" class="cs-filter-region" value="<?php echo $region->slug; ?>" style="margin-right: 12px; accent-color: var(--gold);">
-                                <?php echo $region->name; ?>
-                                <span style="margin-left: auto; font-size: 0.8rem; opacity: 0.5;">(<?php echo $region->count; ?>)</span>
+                                <input type="checkbox" class="cs-filter-region" value="<?php echo esc_attr($region->slug); ?>" style="margin-right: 12px; accent-color: var(--gold);">
+                                <?php echo esc_html($region->name); ?>
+                                <span style="margin-left: auto; font-size: 0.8rem; opacity: 0.5;">(<?php echo (int) $region->count; ?>)</span>
                             </label>
                         <?php endforeach; ?>
                     </div>
@@ -61,10 +64,10 @@ $current_queried_id = get_queried_object_id();
                         <?php foreach($categories as $cat) : 
                             $is_current = ($cat->term_id == $current_queried_id);
                             ?>
-                            <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.95rem;">
-                                <input type="checkbox" class="cs-filter-category" value="<?php echo $cat->slug; ?>" <?php checked($is_current); ?> style="margin-right: 12px; accent-color: var(--gold);">
-                                <?php echo $cat->name; ?>
-                                <span style="margin-left: auto; font-size: 0.8rem; opacity: 0.5;">(<?php echo $cat->count; ?>)</span>
+                             <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.95rem;">
+                                <input type="checkbox" class="cs-filter-category" value="<?php echo esc_attr($cat->slug); ?>" <?php checked($is_current); ?> style="margin-right: 12px; accent-color: var(--gold);">
+                                <?php echo esc_html($cat->name); ?>
+                                <span style="margin-left: auto; font-size: 0.8rem; opacity: 0.5;">(<?php echo (int) $cat->count; ?>)</span>
                             </label>
                         <?php endforeach; ?>
                     </div>

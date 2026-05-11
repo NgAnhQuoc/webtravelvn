@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 /**
  * CS Premium Filter System - FULL VERSION (Admin + REST API)
  */
@@ -294,8 +297,8 @@ function cs_taxonomy_manager_page()
                                         <tr>
                                             <td>
                                                 <div style="font-weight: 600; color: #1d2327;"><?php echo esc_html($t->name); ?></div>
-                                                <div style="font-size: 11px; color: #a7aaad;">ID: #<?php echo $t->term_id; ?> | Bài
-                                                    viết: <?php echo $t->count; ?></div>
+                                                <div style="font-size: 11px; color: #a7aaad;">ID: #<?php echo (int) $t->term_id; ?> | Bài
+                                                    viết: <?php echo (int) $t->count; ?></div>
                                             </td>
                                             <td style="text-align: center;">
                                                 <a href="<?php echo wp_nonce_url(admin_url('edit.php?page=cs-tax-manager&delete_term=' . $t->term_id . '&tax=' . $slug), 'cs_delete_term_' . $t->term_id); ?>"
@@ -425,7 +428,7 @@ function cs_render_filter_sidebar()
                             data-tax="<?php echo esc_attr($tax_slug); ?>" <?php checked($is_checked); ?>>
                         <span class="cs-checkmark"></span>
                         <span class="cs-term-name"><?php echo esc_html($term->name); ?></span>
-                        <span class="cs-term-count">(<?php echo $term->count; ?>)</span>
+                        <span class="cs-term-count">(<?php echo (int) $term->count; ?>)</span>
                     </label>
                 <?php endforeach; ?>
             </div>

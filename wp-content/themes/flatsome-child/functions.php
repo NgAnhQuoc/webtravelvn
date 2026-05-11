@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 // Thêm trường Up ảnh cho Category
 add_action('category_add_form_fields', 'cs_add_category_image_field', 10, 2);
 function cs_add_category_image_field($taxonomy)
@@ -15,6 +18,7 @@ function cs_add_category_image_field($taxonomy)
                 name="cs_tax_media_remove" value="<?php _e('Xóa ảnh', 'hero'); ?>" />
         </p>
     </div>
+    <?php wp_nonce_field('cs_category_image_nonce_action', 'cs_category_image_nonce'); ?>
     <?php
 }
 
@@ -39,6 +43,7 @@ function cs_edit_category_image_field($term, $taxonomy)
             </p>
         </td>
     </tr>
+    <?php wp_nonce_field('cs_category_image_nonce_action', 'cs_category_image_nonce'); ?>
     <?php
 }
 
@@ -46,6 +51,9 @@ add_action('created_category', 'cs_save_category_image', 10, 2);
 add_action('edited_category', 'cs_save_category_image', 10, 2);
 function cs_save_category_image($term_id, $tt_id)
 {
+    if (!isset($_POST['cs_category_image_nonce']) || !wp_verify_nonce($_POST['cs_category_image_nonce'], 'cs_category_image_nonce_action')) {
+        return;
+    }
     if (isset($_POST['category-image-id']) && '' !== $_POST['category-image-id']) {
         update_term_meta($term_id, 'featured_image_id', absint($_POST['category-image-id']));
     } else {
@@ -702,8 +710,8 @@ function cs_destinations_slider_shortcode($atts)
         style="<?php echo $builder_style; ?>">
         <div class="cs-slider-inner">
 
-            <div id="<?php echo $id; ?>" class="cs-slick-slider" data-columns="<?php echo $columns; ?>"
-                style="margin: 0 -<?php echo $padding_val; ?>px;">
+            <div id="<?php echo esc_attr($id); ?>" class="cs-slick-slider" data-columns="<?php echo (int) $columns; ?>"
+                style="margin: 0 -<?php echo (int) $padding_val; ?>px;">
 
 
 
@@ -736,7 +744,7 @@ function cs_destinations_slider_shortcode($atts)
 
                                         <?php if ($show_count === 'true'): ?>
                                             <div class="cs-card-meta">
-                                                <i class="<?php echo esc_attr($icon); ?>"></i> <?php echo $term->count; ?>
+                                                <i class="<?php echo esc_attr($icon); ?>"></i> <?php echo (int) $term->count; ?>
                                                 <?php echo esc_html(mb_strtoupper($count_text)); ?>
                                             </div>
                                         <?php endif; ?>
@@ -757,7 +765,7 @@ function cs_destinations_slider_shortcode($atts)
                                         <?php if ($show_count === 'true'): ?>
                                             <div class="cs-card-meta-s2"
                                                 style="color: #fff !important; font-size: 0.75rem !important; font-weight: 400 !important; text-transform: none !important;">
-                                                <?php echo $term->count; ?>                 <?php echo esc_html($count_text); ?>
+                                                <?php echo (int) $term->count; ?>                 <?php echo esc_html($count_text); ?>
                                             </div>
                                         <?php endif; ?>
                                     <?php endif; ?>
@@ -908,11 +916,11 @@ function cs_destination_blog_shortcode($atts)
     <div
         class="cs-blog-outer <?php echo ($atts['layout'] === 'slider') ? 'is-slider' : 'is-grid'; ?> <?php echo ($atts['show_arrows'] === 'true') ? 'has-arrows' : 'no-arrows'; ?>">
         <div class="cs-blog-inner">
-            <div id="<?php echo $id; ?>"
+            <div id="<?php echo esc_attr($id); ?>"
                 class="<?php echo ($atts['layout'] === 'slider') ? 'cs-slick-slider' : 'cs-post-grid-manual'; ?>"
-                data-columns="<?php echo $columns; ?>"
-                style="margin: 0 -<?php echo $padding_val; ?>px; <?php if ($atts['layout'] === 'grid')
-                       echo 'display: grid; grid-template-columns: repeat(' . $columns . ', 1fr); gap: ' . $gap_val . 'px; margin: 0;'; ?>">
+                data-columns="<?php echo (int) $columns; ?>"
+                style="margin: 0 -<?php echo (int) $padding_val; ?>px; <?php if ($atts['layout'] === 'grid')
+                       echo 'display: grid; grid-template-columns: repeat(' . (int) $columns . ', 1fr); gap: ' . (int) $gap_val . 'px; margin: 0;'; ?>">
 
                 <?php while ($query->have_posts()):
                     $query->the_post();
@@ -961,7 +969,7 @@ function cs_destination_blog_shortcode($atts)
                                         <?php endif; ?>
 
                                         <?php if ($atts['show_views'] === 'true'): ?>
-                                            <span><i class="fas fa-eye"></i> <?php echo cs_get_post_views(get_the_ID()); ?></span>
+                                            <span><i class="fas fa-eye"></i> <?php echo esc_html(cs_get_post_views(get_the_ID())); ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>

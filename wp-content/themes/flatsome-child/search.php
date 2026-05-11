@@ -1,4 +1,7 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 /**
  * The template for displaying search results pages.
  *
@@ -17,7 +20,7 @@ get_header();
         <div class="cs-page-header-content">
             <span class="cs-category-badge-top">KẾT QUẢ TÌM KIẾM</span>
             <h1 class="cs-archive-search">
-                <?php printf(esc_html__('"%s"', 'flatsome'), '<span>' . get_search_query() . '</span>'); ?>
+                <?php printf(esc_html__('"%s"', 'flatsome'), '<span>' . esc_html(get_search_query()) . '</span>'); ?>
             </h1>
         </div>
     </section>
@@ -61,8 +64,8 @@ get_header();
                                 <div class="flex-row relative">
                                     <div class="flex-col flex-grow">
                                         <input type="search" class="search-field mb-0" name="s"
-                                            value="<?php echo get_search_query(); ?>" placeholder="Tìm kiếm lại..."
-                                            autocomplete="off">
+                                            value="<?php echo esc_attr(get_search_query()); ?>"
+                                            placeholder="Tìm kiếm lại..." autocomplete="off">
                                     </div>
                                     <div class="flex-col">
                                         <button type="submit"
